@@ -1,8 +1,7 @@
 package com.elgendy.invitationservice.controller;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.elgendy.invitationservice.model.Invitation;
 import com.elgendy.invitationservice.model.dto.InvitationDTO;
@@ -30,22 +29,18 @@ public class InvitationController {
     public List<InvitationDTO> getAll(){
         List<Invitation> invitations = null;
         List<InvitationDTO> invitationDTOs = null;
-        Iterator<Invitation> it = null;
         try{
             invitations = service.getAll();
-            invitationDTOs = new ArrayList<>();
-            it = invitations.iterator();
-            while(it.hasNext()){
-                Invitation invite = it.next();
-                InvitationDTO dto = new InvitationDTO();
-                dto.setId(invite.getId());
-                dto.setName(invite.getName());
-                dto.setDate(invite.getDate());
-                dto.setExpiryDate(invite.getExpiryDate());
-                dto.setReservationId(invite.getReservationId());
-                dto.setUserId(invite.getUserId());
-                invitationDTOs.add(dto);
-            }
+            invitationDTOs = invitations.stream().map(invitation -> {
+                        InvitationDTO dto = new InvitationDTO();
+                        dto.setId(invitation.getId());
+                        dto.setName(invitation.getName());
+                        dto.setDate(invitation.getDate());
+                        dto.setExpiryDate(invitation.getExpiryDate());
+                        dto.setReservationId(invitation.getReservationId());
+                        dto.setUserId(invitation.getUserId());
+                        return dto;
+            }).collect(Collectors.toList());
             return invitationDTOs;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
@@ -58,11 +53,6 @@ public class InvitationController {
         Invitation invitation = null;
         InvitationDTO dto = null;
         try{
-            invitation = service.getOne(id);
-            if(invitation == null){
-                return null;
-            }
-            LOGGER.info("the invitation is {}", invitation.toString());
             dto = new InvitationDTO();
             dto.setId(invitation.getId());
             dto.setName(invitation.getName());

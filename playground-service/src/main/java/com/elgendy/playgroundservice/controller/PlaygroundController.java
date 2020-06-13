@@ -10,9 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
@@ -31,13 +30,9 @@ public class PlaygroundController implements Serializable {
     public List<PlaygroundDTO> getAll(){
         List<Playground> playgrounds = null;
         List<PlaygroundDTO> playgroundDTOs = null;
-        Iterator<Playground> it = null;
         try{
             playgrounds = service.getAll();
-            playgroundDTOs = new ArrayList<>();
-            it = playgrounds.iterator();
-            while(it.hasNext()){
-                Playground playground = it.next();
+            playgroundDTOs = playgrounds.stream().map(playground -> {
                 PlaygroundDTO dto = new PlaygroundDTO();
                 dto.setId(playground.getId());
                 dto.setName(playground.getName());
@@ -47,8 +42,8 @@ public class PlaygroundController implements Serializable {
                 dto.setDescription(playground.getDescription());
                 dto.setPhone(playground.getPhone());
                 dto.setPricePerHour(playground.getPricePerHour());
-                playgroundDTOs.add(dto);
-            }
+                return dto;
+            }).collect(Collectors.toList());
             return playgroundDTOs;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);

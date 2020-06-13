@@ -10,9 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
@@ -31,13 +30,9 @@ public class ReservationController implements Serializable {
     public List<ReservationDTO> getAll(){
         List<Reservation> reservations = null;
         List<ReservationDTO> reservationDTOs = null;
-        Iterator<Reservation> it = null;
         try{
             reservations = service.getAll();
-            reservationDTOs = new ArrayList<>();
-            it = reservations.iterator();
-            while(it.hasNext()){
-                Reservation reservation = it.next();
+            reservationDTOs = reservations.stream().map(reservation -> {
                 ReservationDTO dto = new ReservationDTO();
                 dto.setId(reservation.getId());
                 dto.setName(reservation.getName());
@@ -46,8 +41,8 @@ public class ReservationController implements Serializable {
                 dto.setReservedTime(reservation.getReservedTime());
                 dto.setPlaygroundId(reservation.getPlaygroundId());
                 dto.setUserId(reservation.getUserId());
-                reservationDTOs.add(dto);
-            }
+                return dto;
+            }).collect(Collectors.toList());
             return reservationDTOs;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);

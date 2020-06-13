@@ -11,9 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
@@ -32,13 +31,9 @@ public class PhotoController implements Serializable {
     public List<PhotoDTO> getAll(){
         List<Photo> photos = null;
         List<PhotoDTO> photoDTOs = null;
-        Iterator<Photo> it = null;
         try{
             photos = service.getAll();
-            photoDTOs = new ArrayList<>();
-            it = photos.iterator();
-            while(it.hasNext()){
-                Photo photo = it.next();
+            photoDTOs = photos.stream().map(photo -> {
                 PhotoDTO dto = new PhotoDTO();
                 dto.setId(photo.getId());
                 dto.setName(photo.getName());
@@ -47,8 +42,8 @@ public class PhotoController implements Serializable {
                 dto.setStoreId(photo.getStoreId());
                 dto.setTeamId(photo.getTeamId());
                 dto.setUserId(photo.getUserId());
-                photoDTOs.add(dto);
-            }
+                return dto;
+            }).collect(Collectors.toList());
             return photoDTOs;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);

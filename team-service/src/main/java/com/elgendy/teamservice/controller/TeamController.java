@@ -10,9 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
@@ -31,20 +30,16 @@ public class TeamController implements Serializable {
     public List<TeamDTO> getAll(){
         List<Team> teams = null;
         List<TeamDTO> teamDTOs = null;
-        Iterator<Team> it = null;
         try{
             teams = service.getAll();
-            teamDTOs = new ArrayList<>();
-            it = teams.iterator();
-            while(it.hasNext()){
-                Team team = it.next();
+            teamDTOs = teams.stream().map(team -> {
                 TeamDTO dto = new TeamDTO();
                 dto.setId(team.getId());
                 dto.setName(team.getName());
                 dto.setAddress(team.getAddress());
                 dto.setBio(team.getBio());
-                teamDTOs.add(dto);
-            }
+                return dto;
+            }).collect(Collectors.toList());
             return teamDTOs;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);

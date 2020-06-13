@@ -16,6 +16,10 @@ public class InvitationDTO {
 
 	private Integer userId;
 
+	private ReservationDTO reservationDTO;
+
+	private UserDTO userDTO;
+
 	public InvitationDTO() {
 		super();
 	}

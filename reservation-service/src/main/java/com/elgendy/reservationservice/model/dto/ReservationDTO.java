@@ -18,10 +18,14 @@ public class ReservationDTO {
 
     private Integer userId;
 
+    private PlaygroundDTO playgroundDTO;
+
+    private UserDTO userDTO;
+
     public ReservationDTO() {
     }
 
-    public ReservationDTO(Integer id, String name, Date reservedTime, String playersNeeded, String hoursNumber, Integer playgroundId, Integer userId) {
+    public ReservationDTO(Integer id, String name, Date reservedTime, String playersNeeded, String hoursNumber, Integer playgroundId, Integer userId, PlaygroundDTO playgroundDTO, UserDTO userDTO) {
         this.id = id;
         this.name = name;
         ReservedTime = reservedTime;
@@ -29,6 +33,8 @@ public class ReservationDTO {
         HoursNumber = hoursNumber;
         this.playgroundId = playgroundId;
         this.userId = userId;
+        this.playgroundDTO = playgroundDTO;
+        this.userDTO = userDTO;
     }
 
     public Integer getId() {
@@ -85,5 +91,21 @@ public class ReservationDTO {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public PlaygroundDTO getPlaygroundDTO() {
+        return playgroundDTO;
+    }
+
+    public void setPlaygroundDTO(PlaygroundDTO playgroundDTO) {
+        this.playgroundDTO = playgroundDTO;
+    }
+
+    public UserDTO getUserDTO() {
+        return userDTO;
+    }
+
+    public void setUserDTO(UserDTO userDTO) {
+        this.userDTO = userDTO;
     }
 }

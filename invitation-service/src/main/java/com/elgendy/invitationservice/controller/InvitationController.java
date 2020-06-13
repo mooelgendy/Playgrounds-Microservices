@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 public class InvitationController {
 
 	private InvitationService service;
+	@Autowired
+	private WebClient.Builder webClientBuilder;
     private static Logger LOGGER = LoggerFactory.getLogger(InvitationController.class);
 
     @Autowired

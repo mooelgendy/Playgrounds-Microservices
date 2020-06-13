@@ -55,7 +55,12 @@ public class InvitationRepositoryImpl implements InvitationRepository{
         }
 	}
 
-	@Override
+//    @Override
+//    public Integer saveAndFlush(Invitation invitation) {
+//        return null;
+//    }
+
+    @Override
 	public void update(Invitation invitation) {
 		try{
             em.merge(invitation);

@@ -1,6 +1,6 @@
-package com.elgendy.teamservice.model.dto;
+package com.elgendy.storeservice.model.dto;
 
-public class TeamDTO {
+public class UserDTO {
 
     private Integer id;
 
@@ -8,15 +8,21 @@ public class TeamDTO {
 
     private String address;
 
+    private String position;
+
+    private String phone;
+
     private String bio;
 
-    public TeamDTO() {
+    public UserDTO() {
     }
 
-    public TeamDTO(Integer id, String name, String address, String bio) {
+    public UserDTO(Integer id, String name, String address, String position, String phone, String bio) {
         this.id = id;
         this.name = name;
         this.address = address;
+        this.position = position;
+        this.phone = phone;
         this.bio = bio;
     }
 
@@ -42,6 +48,22 @@ public class TeamDTO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getBio() {

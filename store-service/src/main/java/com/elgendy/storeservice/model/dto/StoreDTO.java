@@ -14,16 +14,19 @@ public class StoreDTO {
 
     private Integer userId;
 
+    private UserDTO userDTO;
+
     public StoreDTO() {
     }
 
-    public StoreDTO(Integer id, String name, String description, String price, String serialNumber, Integer userId) {
+    public StoreDTO(Integer id, String name, String description, String serialNumber, String price, Integer userId, UserDTO userDTO) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.price = price;
         this.serialNumber = serialNumber;
+        this.price = price;
         this.userId = userId;
+        this.userDTO = userDTO;
     }
 
     public Integer getId() {
@@ -72,5 +75,13 @@ public class StoreDTO {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public UserDTO getUserDTO() {
+        return userDTO;
+    }
+
+    public void setUserDTO(UserDTO userDTO) {
+        this.userDTO = userDTO;
     }
 }

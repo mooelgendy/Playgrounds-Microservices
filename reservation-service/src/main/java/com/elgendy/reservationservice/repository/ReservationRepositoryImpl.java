@@ -65,11 +65,7 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     @Override
     public void delete(Reservation reservation) {
         try{
-            if(em.contains(reservation)){
-                em.remove(reservation);
-            }else {
-                throw new RuntimeException("reservation You Want To Delete is Not Found!");
-            }
+            em.remove(reservation);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
         }

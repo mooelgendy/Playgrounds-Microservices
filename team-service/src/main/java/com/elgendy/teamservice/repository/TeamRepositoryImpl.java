@@ -65,11 +65,7 @@ public class TeamRepositoryImpl implements TeamRepository {
     @Override
     public void delete(Team team) {
         try{
-            if(em.contains(team)){
-                em.remove(team);
-            }else {
-                throw new RuntimeException("Team You Want To Delete is Not Found!");
-            }
+            em.remove(team);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
         }

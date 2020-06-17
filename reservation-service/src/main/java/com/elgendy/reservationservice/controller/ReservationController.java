@@ -1,13 +1,16 @@
 package com.elgendy.reservationservice.controller;
 
+import com.elgendy.reservationservice.model.dto.PlaygroundDTO;
 import com.elgendy.reservationservice.model.dto.ReservationDTO;
 import com.elgendy.reservationservice.model.Reservation;
+import com.elgendy.reservationservice.model.dto.UserDTO;
 import com.elgendy.reservationservice.service.ReservationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.Serializable;
 import java.util.List;
@@ -20,6 +23,9 @@ public class ReservationController implements Serializable {
 
     private ReservationService service;
     private static Logger LOGGER = LoggerFactory.getLogger(ReservationController.class);
+
+    @Autowired
+    private WebClient.Builder webClientBuilder;
 
     @Autowired
     public ReservationController(ReservationService service) {
@@ -39,8 +45,22 @@ public class ReservationController implements Serializable {
                 dto.setHoursNumber(reservation.getHoursNumber());
                 dto.setPlayersNeeded(reservation.getPlayersNeeded());
                 dto.setReservedTime(reservation.getReservedTime());
-                dto.setPlaygroundId(reservation.getPlaygroundId());
-                dto.setUserId(reservation.getUserId());
+                PlaygroundDTO playgroundDTO = webClientBuilder.build()
+                        .get()
+                        .uri("http://localhost:8083/playgrounds/api/playground/" + reservation.getPlaygroundId())
+                        .retrieve()
+                        .bodyToMono(PlaygroundDTO.class)
+                        .block();
+                LOGGER.info("PlaygroundDTO: {}", playgroundDTO.toString());
+                UserDTO userDTO = webClientBuilder.build()
+                        .get()
+                        .uri("http://localhost:8087/playgrounds/api/user/" + reservation.getUserId())
+                        .retrieve()
+                        .bodyToMono(UserDTO.class)
+                        .block();
+                LOGGER.info("UserDTO: {}", userDTO.toString());
+                dto.setPlaygroundDTO(playgroundDTO);
+                dto.setUserDTO(userDTO);
                 return dto;
             }).collect(Collectors.toList());
             return reservationDTOs;

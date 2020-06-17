@@ -1,6 +1,6 @@
 package com.elgendy.teamservice.controller;
 
-import com.elgendy.playgrounds.model.DTO.TeamDTO;
+import com.elgendy.teamservice.model.dto.TeamDTO;
 import com.elgendy.teamservice.model.Team;
 import com.elgendy.teamservice.service.TeamService;
 import org.slf4j.Logger;

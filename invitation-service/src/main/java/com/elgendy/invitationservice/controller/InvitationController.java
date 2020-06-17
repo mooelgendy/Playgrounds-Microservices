@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import com.elgendy.invitationservice.model.Invitation;
 import com.elgendy.invitationservice.model.dto.InvitationDTO;
+import com.elgendy.invitationservice.model.dto.ReservationDTO;
+import com.elgendy.invitationservice.model.dto.UserDTO;
 import com.elgendy.invitationservice.service.InvitationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +21,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class InvitationController {
 
 	private InvitationService service;
-	@Autowired
-	private WebClient.Builder webClientBuilder;
     private static Logger LOGGER = LoggerFactory.getLogger(InvitationController.class);
+
+    @Autowired
+	private WebClient.Builder webClientBuilder;
 
     @Autowired
     public InvitationController(InvitationService service) {
@@ -40,8 +43,23 @@ public class InvitationController {
                         dto.setName(invitation.getName());
                         dto.setDate(invitation.getDate());
                         dto.setExpiryDate(invitation.getExpiryDate());
-                        dto.setReservationId(invitation.getReservationId());
-                        dto.setUserId(invitation.getUserId());
+                        ReservationDTO reservationDTO = webClientBuilder.build()
+                                .get()
+                                .uri("http://reservation-service/playgrounds/api/reservation/" + invitation.getReservationId())
+                                .retrieve()
+                                .bodyToMono(ReservationDTO.class)
+                                .block();
+                        LOGGER.info("Reservation: {}", reservationDTO.toString());
+                        UserDTO userDTO = webClientBuilder.build()
+                                .get()
+                                .uri("http://user-service/playgrounds/api/user/" + invitation.getUserId())
+                                .retrieve()
+                                .bodyToMono(UserDTO.class)
+                                .block();
+                        LOGGER.info("User: {}", userDTO.toString());
+                        dto.setReservationDTO(reservationDTO);
+                        dto.setUserDTO(userDTO);
+                        LOGGER.info(dto.toString());
                         return dto;
             }).collect(Collectors.toList());
             return invitationDTOs;
@@ -56,6 +74,7 @@ public class InvitationController {
         Invitation invitation = null;
         InvitationDTO dto = null;
         try{
+            invitation = service.getOne(id);
             dto = new InvitationDTO();
             dto.setId(invitation.getId());
             dto.setName(invitation.getName());

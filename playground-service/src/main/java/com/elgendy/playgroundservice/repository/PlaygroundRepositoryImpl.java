@@ -65,11 +65,7 @@ public class PlaygroundRepositoryImpl implements PlaygroundRepository {
     @Override
     public void delete(Playground playground) {
         try{
-            if(em.contains(playground)){
-                em.remove(playground);
-            }else {
-                throw new RuntimeException("Playground You Want To Delete is Not Found!");
-            }
+            em.remove(playground);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
         }

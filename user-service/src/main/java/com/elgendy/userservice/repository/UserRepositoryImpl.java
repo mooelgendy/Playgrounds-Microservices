@@ -65,11 +65,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void delete(User user) {
         try{
-            if(em.contains(user)){
-                em.remove(user);
-            }else {
-                throw new RuntimeException("User You Want To Delete is Not Found!");
-            }
+            em.remove(user);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
         }

@@ -2,14 +2,15 @@ package com.elgendy.storeservice.controller;
 
 import com.elgendy.storeservice.model.dto.StoreDTO;
 import com.elgendy.storeservice.model.Store;
+import com.elgendy.storeservice.model.dto.UserDTO;
 import com.elgendy.storeservice.service.StoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,9 @@ public class StoreController {
 
     private StoreService service;
     private static Logger LOGGER = LoggerFactory.getLogger(StoreController.class);
+
+    @Autowired
+    WebClient.Builder webClientBuilder;
 
     @Autowired
     public StoreController(StoreService service) {
@@ -41,7 +45,14 @@ public class StoreController {
                 dto.setDescription(item.getDescription());
                 dto.setSerialNumber(item.getSerialNumber());
                 dto.setPrice(item.getPrice());
-                dto.setUserId(item.getUserId());
+                UserDTO userDTO = webClientBuilder.build()
+                        .get()
+                        .uri("http://localhost:8087/playgrounds/api/user/" + item.getUserId())
+                        .retrieve()
+                        .bodyToMono(UserDTO.class)
+                        .block();
+                LOGGER.info("UserDTO: {}", userDTO.toString());
+                dto.setUserDTO(userDTO);
                 return dto;
             }).collect(Collectors.toList());
             return itemsDTOs;

@@ -72,11 +72,7 @@ public class InvitationRepositoryImpl implements InvitationRepository{
 	@Override
 	public void delete(Invitation invitation) {
 		try{
-            if(em.contains(invitation)){
-                em.remove(invitation);
-            }else {
-                throw new RuntimeException("photo You Want To Delete is Not Found!");
-            }
+		    em.remove(invitation);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
         }

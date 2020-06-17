@@ -65,11 +65,7 @@ public class StoreRepositoryImpl implements StoreRepository{
     @Override
     public void delete(Store item) {
         try{
-            if(em.contains(item)){
-                em.remove(item);
-            }else {
-                throw new RuntimeException("Item You Want To Delete is Not Found!");
-            }
+            em.remove(item);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
         }

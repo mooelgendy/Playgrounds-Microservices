@@ -80,4 +80,34 @@ public class InvitationDTO {
 	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
+
+	public ReservationDTO getReservationDTO() {
+		return reservationDTO;
+	}
+
+	public void setReservationDTO(ReservationDTO reservationDTO) {
+		this.reservationDTO = reservationDTO;
+	}
+
+	public UserDTO getUserDTO() {
+		return userDTO;
+	}
+
+	public void setUserDTO(UserDTO userDTO) {
+		this.userDTO = userDTO;
+	}
+
+	@Override
+	public String toString() {
+		return "InvitationDTO{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", date=" + date +
+				", expiryDate=" + expiryDate +
+				", reservationId=" + reservationId +
+				", userId=" + userId +
+				", reservationDTO=" + reservationDTO +
+				", userDTO=" + userDTO +
+				'}';
+	}
 }

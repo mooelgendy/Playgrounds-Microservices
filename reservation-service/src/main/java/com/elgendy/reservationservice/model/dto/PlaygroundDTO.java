@@ -97,4 +97,18 @@ public class PlaygroundDTO {
     public void setPricePerHour(String pricePerHour) {
         this.pricePerHour = pricePerHour;
     }
+
+    @Override
+    public String toString() {
+        return "PlaygroundDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", description='" + description + '\'' +
+                ", phone='" + phone + '\'' +
+                ", area='" + area + '\'' +
+                ", availableTime=" + availableTime +
+                ", pricePerHour='" + pricePerHour + '\'' +
+                '}';
+    }
 }

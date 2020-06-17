@@ -65,11 +65,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     @Override
     public void delete(Photo photo) {
         try{
-            if(em.contains(photo)){
-                em.remove(photo);
-            }else {
-                throw new RuntimeException("photo You Want To Delete is Not Found!");
-            }
+            em.remove(photo);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
         }

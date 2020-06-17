@@ -64,4 +64,15 @@ public class ReservationDTO {
     public void setHoursNumber(String hoursNumber) {
         HoursNumber = hoursNumber;
     }
+
+    @Override
+    public String toString() {
+        return "ReservationDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", ReservedTime=" + ReservedTime +
+                ", PlayersNeeded='" + PlayersNeeded + '\'' +
+                ", HoursNumber='" + HoursNumber + '\'' +
+                '}';
+    }
 }

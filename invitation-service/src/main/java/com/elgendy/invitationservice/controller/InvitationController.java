@@ -3,17 +3,17 @@ package com.elgendy.invitationservice.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.elgendy.invitationservice.exception.InternalServerErrorException;
 import com.elgendy.invitationservice.model.Invitation;
 import com.elgendy.invitationservice.model.dto.InvitationDTO;
-import com.elgendy.invitationservice.model.dto.ReservationDTO;
-import com.elgendy.invitationservice.model.dto.UserDTO;
 import com.elgendy.invitationservice.service.InvitationService;
+import com.elgendy.invitationservice.service.ReservationInfo;
+import com.elgendy.invitationservice.service.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
@@ -24,13 +24,16 @@ public class InvitationController {
     private static Logger LOGGER = LoggerFactory.getLogger(InvitationController.class);
 
     @Autowired
-	private WebClient.Builder webClientBuilder;
+    private UserInfo userInfo;
+
+    @Autowired
+    private ReservationInfo reservationInfo;
 
     @Autowired
     public InvitationController(InvitationService service) {
         this.service = service;
     }
-    
+
     @GetMapping("/")
     public List<InvitationDTO> getAll(){
         List<Invitation> invitations = null;
@@ -43,29 +46,15 @@ public class InvitationController {
                         dto.setName(invitation.getName());
                         dto.setDate(invitation.getDate());
                         dto.setExpiryDate(invitation.getExpiryDate());
-                        ReservationDTO reservationDTO = webClientBuilder.build()
-                                .get()
-                                .uri("http://reservation-service/playgrounds/api/reservation/" + invitation.getReservationId())
-                                .retrieve()
-                                .bodyToMono(ReservationDTO.class)
-                                .block();
-                        LOGGER.info("Reservation: {}", reservationDTO.toString());
-                        UserDTO userDTO = webClientBuilder.build()
-                                .get()
-                                .uri("http://user-service/playgrounds/api/user/" + invitation.getUserId())
-                                .retrieve()
-                                .bodyToMono(UserDTO.class)
-                                .block();
-                        LOGGER.info("User: {}", userDTO.toString());
-                        dto.setReservationDTO(reservationDTO);
-                        dto.setUserDTO(userDTO);
+                        dto.setReservationDTO(reservationInfo.getReservationDTO(invitation)); //call reservation-service
+                        dto.setUserDTO(userInfo.getUserDTO(invitation));                      //call user-service
                         LOGGER.info(dto.toString());
                         return dto;
             }).collect(Collectors.toList());
             return invitationDTOs;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -75,6 +64,9 @@ public class InvitationController {
         InvitationDTO dto = null;
         try{
             invitation = service.getOne(id);
+            if(invitation == null){
+                return null;
+            }
             dto = new InvitationDTO();
             dto.setId(invitation.getId());
             dto.setName(invitation.getName());
@@ -85,7 +77,7 @@ public class InvitationController {
             return dto;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -103,7 +95,7 @@ public class InvitationController {
             service.add(invitation);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -122,7 +114,7 @@ public class InvitationController {
             service.update(invitation);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
 
     }
@@ -135,7 +127,7 @@ public class InvitationController {
             service.delete(id);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 }

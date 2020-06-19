@@ -1,5 +1,6 @@
 package com.elgendy.photoservice.controller;
 
+import com.elgendy.photoservice.exception.InternalServerErrorException;
 import com.elgendy.photoservice.model.dto.PhotoDTO;
 import com.elgendy.photoservice.model.Photo;
 import com.elgendy.photoservice.service.PhotoService;
@@ -47,7 +48,7 @@ public class PhotoController implements Serializable {
             return photoDTOs;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -57,6 +58,9 @@ public class PhotoController implements Serializable {
         PhotoDTO dto = null;
         try{
             photo = service.getOne(id);
+            if(photo == null){
+                return null;
+            }
             dto = new PhotoDTO();
             dto.setId(photo.getId());
             dto.setLink(photo.getLink());
@@ -68,7 +72,7 @@ public class PhotoController implements Serializable {
             return dto;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -87,7 +91,7 @@ public class PhotoController implements Serializable {
             service.add(photo);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -107,7 +111,7 @@ public class PhotoController implements Serializable {
             service.update(photo);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -119,7 +123,7 @@ public class PhotoController implements Serializable {
             service.delete(id);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 }

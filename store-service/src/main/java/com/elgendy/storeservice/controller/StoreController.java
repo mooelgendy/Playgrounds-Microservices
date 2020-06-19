@@ -1,15 +1,16 @@
 package com.elgendy.storeservice.controller;
 
+import com.elgendy.storeservice.exception.InternalServerErrorException;
 import com.elgendy.storeservice.model.dto.StoreDTO;
 import com.elgendy.storeservice.model.Store;
-import com.elgendy.storeservice.model.dto.UserDTO;
 import com.elgendy.storeservice.service.StoreService;
+import com.elgendy.storeservice.service.UserInfo;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +25,7 @@ public class StoreController {
     private static Logger LOGGER = LoggerFactory.getLogger(StoreController.class);
 
     @Autowired
-    WebClient.Builder webClientBuilder;
+    UserInfo userInfo;
 
     @Autowired
     public StoreController(StoreService service) {
@@ -32,6 +33,7 @@ public class StoreController {
     }
 
     @GetMapping("/")
+    @HystrixCommand
     public List<StoreDTO> getAll(){
         List<Store> items = null;
         List<StoreDTO> itemsDTOs = null;
@@ -45,20 +47,13 @@ public class StoreController {
                 dto.setDescription(item.getDescription());
                 dto.setSerialNumber(item.getSerialNumber());
                 dto.setPrice(item.getPrice());
-                UserDTO userDTO = webClientBuilder.build()
-                        .get()
-                        .uri("http://localhost:8087/playgrounds/api/user/" + item.getUserId())
-                        .retrieve()
-                        .bodyToMono(UserDTO.class)
-                        .block();
-                LOGGER.info("UserDTO: {}", userDTO.toString());
-                dto.setUserDTO(userDTO);
+                dto.setUserDTO(userInfo.getUserDTO(item));
                 return dto;
             }).collect(Collectors.toList());
             return itemsDTOs;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -68,6 +63,9 @@ public class StoreController {
         StoreDTO dto = null;
         try{
             item = service.getOne(id);
+            if(item == null){
+                return null;
+            }
             dto = new StoreDTO();
             dto.setId(item.getId());
             dto.setName(item.getName());
@@ -78,7 +76,7 @@ public class StoreController {
             return dto;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -96,7 +94,7 @@ public class StoreController {
             service.add(item);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -115,7 +113,7 @@ public class StoreController {
             service.update(item);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -126,7 +124,7 @@ public class StoreController {
             service.delete(id);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 }

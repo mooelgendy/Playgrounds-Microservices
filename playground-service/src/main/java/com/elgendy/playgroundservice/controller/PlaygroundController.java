@@ -1,5 +1,6 @@
 package com.elgendy.playgroundservice.controller;
 
+import com.elgendy.playgroundservice.exception.InternalServerErrorException;
 import com.elgendy.playgroundservice.model.dto.PlaygroundDTO;
 import com.elgendy.playgroundservice.model.Playground;
 import com.elgendy.playgroundservice.service.PlaygroundService;
@@ -47,7 +48,7 @@ public class PlaygroundController implements Serializable {
             return playgroundDTOs;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -57,6 +58,9 @@ public class PlaygroundController implements Serializable {
         PlaygroundDTO dto = null;
         try{
             playground = service.getOne(id);
+            if(playground == null){
+                return null;
+            }
             dto = new PlaygroundDTO();
             dto.setId(playground.getId());
             dto.setName(playground.getName());
@@ -69,7 +73,7 @@ public class PlaygroundController implements Serializable {
             return dto;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -89,7 +93,7 @@ public class PlaygroundController implements Serializable {
             service.add(playground);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -110,7 +114,7 @@ public class PlaygroundController implements Serializable {
             service.update(playground);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -122,7 +126,7 @@ public class PlaygroundController implements Serializable {
             service.delete(id);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 }

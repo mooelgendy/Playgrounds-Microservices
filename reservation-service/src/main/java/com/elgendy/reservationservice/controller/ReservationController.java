@@ -1,16 +1,17 @@
 package com.elgendy.reservationservice.controller;
 
-import com.elgendy.reservationservice.model.dto.PlaygroundDTO;
+import com.elgendy.reservationservice.exception.InternalServerErrorException;
 import com.elgendy.reservationservice.model.dto.ReservationDTO;
 import com.elgendy.reservationservice.model.Reservation;
-import com.elgendy.reservationservice.model.dto.UserDTO;
+import com.elgendy.reservationservice.service.PlaygroundInfo;
 import com.elgendy.reservationservice.service.ReservationService;
+import com.elgendy.reservationservice.service.UserInfo;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,7 +26,10 @@ public class ReservationController implements Serializable {
     private static Logger LOGGER = LoggerFactory.getLogger(ReservationController.class);
 
     @Autowired
-    private WebClient.Builder webClientBuilder;
+    UserInfo userInfo;
+
+    @Autowired
+    PlaygroundInfo playgroundInfo;
 
     @Autowired
     public ReservationController(ReservationService service) {
@@ -33,6 +37,7 @@ public class ReservationController implements Serializable {
     }
 
     @GetMapping("/")
+    @HystrixCommand
     public List<ReservationDTO> getAll(){
         List<Reservation> reservations = null;
         List<ReservationDTO> reservationDTOs = null;
@@ -45,28 +50,14 @@ public class ReservationController implements Serializable {
                 dto.setHoursNumber(reservation.getHoursNumber());
                 dto.setPlayersNeeded(reservation.getPlayersNeeded());
                 dto.setReservedTime(reservation.getReservedTime());
-                PlaygroundDTO playgroundDTO = webClientBuilder.build()
-                        .get()
-                        .uri("http://localhost:8083/playgrounds/api/playground/" + reservation.getPlaygroundId())
-                        .retrieve()
-                        .bodyToMono(PlaygroundDTO.class)
-                        .block();
-                LOGGER.info("PlaygroundDTO: {}", playgroundDTO.toString());
-                UserDTO userDTO = webClientBuilder.build()
-                        .get()
-                        .uri("http://localhost:8087/playgrounds/api/user/" + reservation.getUserId())
-                        .retrieve()
-                        .bodyToMono(UserDTO.class)
-                        .block();
-                LOGGER.info("UserDTO: {}", userDTO.toString());
-                dto.setPlaygroundDTO(playgroundDTO);
-                dto.setUserDTO(userDTO);
+                dto.setPlaygroundDTO(playgroundInfo.getPlaygroundDTO(reservation));  // call playground-service
+                dto.setUserDTO(userInfo.getUserDTO(reservation));                    // call user-service
                 return dto;
             }).collect(Collectors.toList());
             return reservationDTOs;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -76,6 +67,9 @@ public class ReservationController implements Serializable {
         ReservationDTO dto = null;
         try{
             reservation = service.getOne(id);
+            if(reservation == null){
+                return null;
+            }
             dto = new ReservationDTO();
             dto.setId(reservation.getId());
             dto.setName(reservation.getName());
@@ -87,7 +81,7 @@ public class ReservationController implements Serializable {
             return dto;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -106,7 +100,7 @@ public class ReservationController implements Serializable {
             service.add(reservation);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -125,7 +119,7 @@ public class ReservationController implements Serializable {
             service.update(reservation);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 
@@ -136,7 +130,7 @@ public class ReservationController implements Serializable {
             service.delete(id);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred!");
         }
     }
 }

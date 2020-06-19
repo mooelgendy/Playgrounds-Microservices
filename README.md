@@ -6,10 +6,13 @@ purchase sports products from playground store and more planed modules will be a
 This repository is a microservices Architecture version of the already existing Playgrounds repository which is built using SOA Architecture.
 
 Technology stack used in this web application:
-- Microservices Architecture
-- Spring Boot
-- RESTful Web Service with Spring REST
-- Spring Data
-- Hibernate/JPA
-- Mysql Database
-- Maven
+- Microservices Architecture.
+- Spring Boot.
+- Spring Cloud.
+- Service registration and discovery pattern using Eureka server.
+- Circuit Breaker pattern using Netflix Hystrix.
+- RESTful Web Service using Spring REST.
+- Spring Data.
+- Hibernate/JPA.
+- Mysql Database.
+- Maven.

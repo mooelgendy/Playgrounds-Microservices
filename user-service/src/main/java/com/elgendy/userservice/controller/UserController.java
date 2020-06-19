@@ -1,5 +1,6 @@
 package com.elgendy.userservice.controller;
 
+import com.elgendy.userservice.exception.InternalServerErrorException;
 import com.elgendy.userservice.model.dto.UserDTO;
 import com.elgendy.userservice.model.User;
 import com.elgendy.userservice.service.UserService;
@@ -45,7 +46,7 @@ public class UserController implements Serializable {
             return userDTOs;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred");
         }
     }
 
@@ -55,6 +56,9 @@ public class UserController implements Serializable {
         UserDTO dto = null;
         try{
             user = service.getOne(id);
+            if(user == null){
+                return null;
+            }
             dto = new UserDTO();
             dto.setId(user.getId());
             dto.setName(user.getName());
@@ -65,7 +69,7 @@ public class UserController implements Serializable {
             return dto;
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred");
         }
     }
 
@@ -83,7 +87,7 @@ public class UserController implements Serializable {
             service.add(user);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred");
         }
     }
 
@@ -102,7 +106,7 @@ public class UserController implements Serializable {
             service.update(user);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred");
         }
 
     }
@@ -114,8 +118,7 @@ public class UserController implements Serializable {
             service.delete(id);
         } catch (Exception e){
             LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Internal Server Error");
+            throw new InternalServerErrorException("Error Occurred");
         }
-
     }
 }

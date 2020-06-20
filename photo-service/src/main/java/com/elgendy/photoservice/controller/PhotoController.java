@@ -8,6 +8,9 @@ import com.elgendy.photoservice.service.PhotoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +32,7 @@ public class PhotoController implements Serializable {
     }
 
     @GetMapping("/")
+    @Cacheable(value= "photosListCache", unless= "#result.size() == 0")
     public List<PhotoDTO> getAll(){
         List<Photo> photos = null;
         List<PhotoDTO> photoDTOs = null;
@@ -53,6 +57,7 @@ public class PhotoController implements Serializable {
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "photoCache")
     public PhotoDTO findOne(@PathVariable("id") Integer id){
         Photo photo = null;
         PhotoDTO dto = null;
@@ -78,6 +83,7 @@ public class PhotoController implements Serializable {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
+    @CachePut(value= "photoCache")
     public void create(@RequestBody PhotoDTO dto) {
         Photo photo = null;
         try{
@@ -97,6 +103,7 @@ public class PhotoController implements Serializable {
 
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
+    @CachePut(value= "photoCache")
     public void update(@RequestBody PhotoDTO dto) {
         Photo photo = null;
         try{
@@ -118,6 +125,7 @@ public class PhotoController implements Serializable {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @CacheEvict(value= "photoCache")
     public void delete(@PathVariable("id") Integer id) {
         try{
             service.delete(id);

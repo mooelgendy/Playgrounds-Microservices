@@ -2,6 +2,7 @@ package com.elgendy.storeservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
@@ -11,6 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @SpringBootApplication
 @EnableEurekaClient
 @EnableCircuitBreaker
+@EnableCaching
 public class StoreServiceApplication {
 
 	@Bean

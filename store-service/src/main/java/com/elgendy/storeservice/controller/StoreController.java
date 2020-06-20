@@ -9,6 +9,9 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +36,7 @@ public class StoreController {
     }
 
     @GetMapping("/")
-    @HystrixCommand
+    @Cacheable(value= "itemsListCache", unless= "#result.size() == 0")
     public List<StoreDTO> getAll(){
         List<Store> items = null;
         List<StoreDTO> itemsDTOs = null;
@@ -58,6 +61,7 @@ public class StoreController {
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "itemCache")
     public StoreDTO findOne(@PathVariable("id") Integer id){
         Store item = null;
         StoreDTO dto = null;
@@ -82,6 +86,7 @@ public class StoreController {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
+    @CachePut(value= "itemCache")
     public void create(@RequestBody StoreDTO dto) {
         Store item = null;
         try{
@@ -100,6 +105,7 @@ public class StoreController {
 
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
+    @CachePut(value= "itemCache")
     public void update(@RequestBody StoreDTO dto) {
         Store item = null;
         try{
@@ -119,6 +125,7 @@ public class StoreController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @CacheEvict(value= "itemCache")
     public void delete(@PathVariable("id") Integer id) {
         try{
             service.delete(id);

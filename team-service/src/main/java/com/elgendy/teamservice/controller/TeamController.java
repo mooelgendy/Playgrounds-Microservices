@@ -7,6 +7,9 @@ import com.elgendy.teamservice.service.TeamService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +31,7 @@ public class TeamController implements Serializable {
     }
 
     @GetMapping("/")
+    @Cacheable(value= "teamsListCache", unless= "#result.size() == 0")
     public List<TeamDTO> getAll(){
         List<Team> teams = null;
         List<TeamDTO> teamDTOs = null;
@@ -49,6 +53,7 @@ public class TeamController implements Serializable {
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "teamCache")
     public TeamDTO findOne(@PathVariable("id") Integer id){
         Team team = null;
         TeamDTO dto = null;
@@ -71,6 +76,7 @@ public class TeamController implements Serializable {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
+    @CachePut(value= "teamCache")
     public void create(@RequestBody TeamDTO dto) {
         Team team = null;
         try{
@@ -87,6 +93,7 @@ public class TeamController implements Serializable {
 
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
+    @CachePut(value= "teamCache")
     public void update(@RequestBody TeamDTO dto) {
         Team team = null;
         try{
@@ -104,6 +111,7 @@ public class TeamController implements Serializable {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @CacheEvict(value= "teamCache")
     public void delete(@PathVariable("id") Integer id) {
         try{
             service.delete(id);

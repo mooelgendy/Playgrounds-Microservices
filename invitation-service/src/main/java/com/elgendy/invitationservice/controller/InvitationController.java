@@ -12,6 +12,9 @@ import com.elgendy.invitationservice.service.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +38,7 @@ public class InvitationController {
     }
 
     @GetMapping("/")
+    @Cacheable(value= "invitationsListCache", unless= "#result.size() == 0")
     public List<InvitationDTO> getAll(){
         List<Invitation> invitations = null;
         List<InvitationDTO> invitationDTOs = null;
@@ -59,6 +63,7 @@ public class InvitationController {
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "invitationCache")
     public InvitationDTO findOne(@PathVariable("id") Integer id){
         Invitation invitation = null;
         InvitationDTO dto = null;
@@ -83,6 +88,7 @@ public class InvitationController {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
+    @CachePut(value= "InvitationCache")
     public void create(@RequestBody InvitationDTO dto) {
         Invitation invitation = null;
         try{
@@ -101,6 +107,7 @@ public class InvitationController {
 
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
+    @CachePut(value = "invitationCache")
     public void update(@RequestBody InvitationDTO dto) {
         Invitation invitation = null;
         try{
@@ -122,6 +129,7 @@ public class InvitationController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @CacheEvict(value= "InvitationCache")
     public void delete(@PathVariable("id") Integer id) {
         try{
             service.delete(id);

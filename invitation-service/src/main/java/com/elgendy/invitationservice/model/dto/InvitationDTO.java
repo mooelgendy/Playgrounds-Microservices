@@ -1,8 +1,9 @@
 package com.elgendy.invitationservice.model.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class InvitationDTO {
+public class InvitationDTO implements Serializable {
 
 	private Integer id;
 

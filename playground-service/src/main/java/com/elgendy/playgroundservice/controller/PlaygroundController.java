@@ -7,6 +7,9 @@ import com.elgendy.playgroundservice.service.PlaygroundService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +31,7 @@ public class PlaygroundController implements Serializable {
     }
 
     @GetMapping("/")
+    @Cacheable(value= "playgroundsListCache", unless= "#result.size() == 0")
     public List<PlaygroundDTO> getAll(){
         List<Playground> playgrounds = null;
         List<PlaygroundDTO> playgroundDTOs = null;
@@ -53,6 +57,7 @@ public class PlaygroundController implements Serializable {
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "playgroundCache")
     public PlaygroundDTO findOne(@PathVariable("id") Integer id){
         Playground playground = null;
         PlaygroundDTO dto = null;
@@ -79,6 +84,7 @@ public class PlaygroundController implements Serializable {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
+    @CachePut(value= "playgroundCache")
     public void create(@RequestBody PlaygroundDTO dto) {
         Playground playground = null;
         try{
@@ -99,6 +105,7 @@ public class PlaygroundController implements Serializable {
 
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
+    @CachePut(value= "playgroundCache")
     public void update(@RequestBody PlaygroundDTO dto) {
         Playground playground = null;
         try{
@@ -121,6 +128,7 @@ public class PlaygroundController implements Serializable {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @CacheEvict(value= "playgroundCache")
     public void delete(@PathVariable("id") Integer id) {
         try{
             service.delete(id);

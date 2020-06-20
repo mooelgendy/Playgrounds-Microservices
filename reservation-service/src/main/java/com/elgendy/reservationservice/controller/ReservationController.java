@@ -6,10 +6,12 @@ import com.elgendy.reservationservice.model.Reservation;
 import com.elgendy.reservationservice.service.PlaygroundInfo;
 import com.elgendy.reservationservice.service.ReservationService;
 import com.elgendy.reservationservice.service.UserInfo;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +39,7 @@ public class ReservationController implements Serializable {
     }
 
     @GetMapping("/")
-    @HystrixCommand
+    @Cacheable(value= "reservationsListCache", unless= "#result.size() == 0")
     public List<ReservationDTO> getAll(){
         List<Reservation> reservations = null;
         List<ReservationDTO> reservationDTOs = null;
@@ -62,6 +64,7 @@ public class ReservationController implements Serializable {
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "reservationCache")
     public ReservationDTO findOne(@PathVariable("id") Integer id){
         Reservation reservation = null;
         ReservationDTO dto = null;
@@ -87,6 +90,7 @@ public class ReservationController implements Serializable {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
+    @CachePut(value= "reservationCache")
     public void create(@RequestBody ReservationDTO dto) {
         Reservation reservation = null;
         try{
@@ -106,6 +110,7 @@ public class ReservationController implements Serializable {
 
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
+    @CachePut(value= "reservationCache")
     public void update(@RequestBody ReservationDTO dto) {
         Reservation reservation = null;
         try{
@@ -125,6 +130,7 @@ public class ReservationController implements Serializable {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @CacheEvict(value= "reservationCache")
     public void delete(@PathVariable("id") Integer id) {
         try{
             service.delete(id);

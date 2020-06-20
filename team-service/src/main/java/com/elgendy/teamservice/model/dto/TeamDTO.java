@@ -1,6 +1,8 @@
 package com.elgendy.teamservice.model.dto;
 
-public class TeamDTO {
+import java.io.Serializable;
+
+public class TeamDTO implements Serializable {
 
     private Integer id;
 

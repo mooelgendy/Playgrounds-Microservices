@@ -1,6 +1,8 @@
 package com.elgendy.photoservice.model.dto;
 
-public class PhotoDTO {
+import java.io.Serializable;
+
+public class PhotoDTO implements Serializable {
 
     private Integer id;
 

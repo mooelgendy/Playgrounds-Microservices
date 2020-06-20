@@ -1,6 +1,8 @@
 package com.elgendy.storeservice.model.dto;
 
-public class UserDTO {
+import java.io.Serializable;
+
+public class UserDTO implements Serializable {
 
     private Integer id;
 

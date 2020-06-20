@@ -1,8 +1,9 @@
 package com.elgendy.reservationservice.model.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class PlaygroundDTO {
+public class PlaygroundDTO implements Serializable {
 
     private Integer id;
 

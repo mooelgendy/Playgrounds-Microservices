@@ -7,6 +7,9 @@ import com.elgendy.userservice.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +31,7 @@ public class UserController implements Serializable {
     }
 
     @GetMapping("/")
+    @Cacheable(value= "usersListCache", unless= "#result.size() == 0")
     public List<UserDTO> getAll(){
         List<User> users = null;
         List<UserDTO> userDTOs = null;
@@ -51,6 +55,7 @@ public class UserController implements Serializable {
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "userCache")
     public UserDTO findOne(@PathVariable("id") Integer id){
         User user = null;
         UserDTO dto = null;
@@ -75,6 +80,7 @@ public class UserController implements Serializable {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
+    @CachePut(value= "userCache")
     public void create(@RequestBody UserDTO dto) {
         User user = null;
         try{
@@ -93,6 +99,7 @@ public class UserController implements Serializable {
 
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
+    @CachePut(value= "userCache")
     public void update(@RequestBody UserDTO dto) {
         User user = null;
         try{
@@ -113,6 +120,7 @@ public class UserController implements Serializable {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @CacheEvict(value= "userCache")
     public void delete(@PathVariable("id") Integer id) {
         try{
             service.delete(id);

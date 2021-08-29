@@ -1,13 +1,11 @@
 package com.elgendy.photoservice.controller;
 
 import com.elgendy.photoservice.exception.InternalServerErrorException;
-import com.elgendy.photoservice.model.dto.PhotoDTO;
 import com.elgendy.photoservice.model.Photo;
+import com.elgendy.photoservice.model.dto.PhotoDTO;
 import com.elgendy.photoservice.service.PhotoService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,17 +17,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+@Log4j2
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/photo")
 public class PhotoController implements Serializable {
 
-    private PhotoService service;
-    private static Logger LOGGER = LoggerFactory.getLogger(PhotoController.class);
-
-    @Autowired
-    public PhotoController(PhotoService service) {
-        this.service = service;
-    }
+    private final PhotoService service;
 
     @GetMapping("/")
     @Cacheable(value= "photosListCache", unless= "#result.size() == 0")
@@ -51,7 +45,7 @@ public class PhotoController implements Serializable {
             }).collect(Collectors.toList());
             return photoDTOs;
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -76,7 +70,7 @@ public class PhotoController implements Serializable {
             dto.setUserId(photo.getUserId());
             return dto;
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -96,7 +90,7 @@ public class PhotoController implements Serializable {
             photo.setTeamId(dto.getTeamId());
             service.add(photo);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -117,7 +111,7 @@ public class PhotoController implements Serializable {
             photo.setTeamId(dto.getTeamId());
             service.update(photo);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -130,7 +124,7 @@ public class PhotoController implements Serializable {
         try{
             service.delete(id);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }

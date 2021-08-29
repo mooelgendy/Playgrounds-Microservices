@@ -1,26 +1,21 @@
 package com.elgendy.teamservice.repository;
 
 import com.elgendy.teamservice.model.Team;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
+@Log4j2
+@AllArgsConstructor
 @Repository
 public class TeamRepositoryImpl implements TeamRepository {
 
     @PersistenceContext
-    private EntityManager em;
-    private static Logger LOGGER = LoggerFactory.getLogger(TeamRepositoryImpl.class);
-
-    @Autowired
-    public TeamRepositoryImpl(EntityManager em) {
-        this.em = em;
-    }
+    private final EntityManager em;
 
     @Override
     public List<Team> findAll() {
@@ -28,7 +23,7 @@ public class TeamRepositoryImpl implements TeamRepository {
         try{
             teams = em.createQuery("From Team", Team.class).getResultList();
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return teams;
     }
@@ -39,7 +34,7 @@ public class TeamRepositoryImpl implements TeamRepository {
         try{
             teamById = em.find(Team.class, id);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return teamById;
     }
@@ -49,7 +44,7 @@ public class TeamRepositoryImpl implements TeamRepository {
         try{
             em.persist(team);
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -58,7 +53,7 @@ public class TeamRepositoryImpl implements TeamRepository {
         try{
             em.merge(team);
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -67,7 +62,7 @@ public class TeamRepositoryImpl implements TeamRepository {
         try{
             em.remove(team);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 }

@@ -1,12 +1,11 @@
 package com.elgendy.teamservice.controller;
 
 import com.elgendy.teamservice.exception.InternalServerErrorException;
-import com.elgendy.teamservice.model.dto.TeamDTO;
 import com.elgendy.teamservice.model.Team;
+import com.elgendy.teamservice.model.dto.TeamDTO;
 import com.elgendy.teamservice.service.TeamService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,17 +17,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+@Log4j2
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/team")
 public class TeamController implements Serializable {
 
-    private TeamService service;
-    private static Logger LOGGER = LoggerFactory.getLogger(TeamController.class);
-
-    @Autowired
-    public TeamController(TeamService service) {
-        this.service = service;
-    }
+    private final TeamService service;
 
     @GetMapping("/")
     @Cacheable(value= "teamsListCache", unless= "#result.size() == 0")
@@ -47,7 +42,7 @@ public class TeamController implements Serializable {
             }).collect(Collectors.toList());
             return teamDTOs;
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred");
         }
     }
@@ -69,7 +64,7 @@ public class TeamController implements Serializable {
             dto.setBio(team.getBio());
             return dto;
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred");
         }
     }
@@ -86,7 +81,7 @@ public class TeamController implements Serializable {
             team.setBio(dto.getBio());
             service.add(team);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred");
         }
     }
@@ -104,7 +99,7 @@ public class TeamController implements Serializable {
             team.setBio(dto.getBio());
             service.update(team);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred");
         }
     }
@@ -116,7 +111,7 @@ public class TeamController implements Serializable {
         try{
             service.delete(id);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred");
         }
     }

@@ -9,10 +9,10 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.reactive.function.client.WebClient;
 
-@SpringBootApplication
+@EnableCaching
 @EnableEurekaClient
 @EnableCircuitBreaker
-@EnableCaching
+@SpringBootApplication
 public class InvitationServiceApplication {
 
 	@Bean

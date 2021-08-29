@@ -1,14 +1,13 @@
 package com.elgendy.reservationservice.controller;
 
 import com.elgendy.reservationservice.exception.InternalServerErrorException;
-import com.elgendy.reservationservice.model.dto.ReservationDTO;
 import com.elgendy.reservationservice.model.Reservation;
+import com.elgendy.reservationservice.model.dto.ReservationDTO;
 import com.elgendy.reservationservice.service.PlaygroundInfo;
 import com.elgendy.reservationservice.service.ReservationService;
 import com.elgendy.reservationservice.service.UserInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,23 +19,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+@Log4j2
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/reservation")
 public class ReservationController implements Serializable {
 
-    private ReservationService service;
-    private static Logger LOGGER = LoggerFactory.getLogger(ReservationController.class);
-
-    @Autowired
-    UserInfo userInfo;
-
-    @Autowired
-    PlaygroundInfo playgroundInfo;
-
-    @Autowired
-    public ReservationController(ReservationService service) {
-        this.service = service;
-    }
+    private final ReservationService service;
+    private final UserInfo userInfo;
+    private final PlaygroundInfo playgroundInfo;
 
     @GetMapping("/")
     @Cacheable(value= "reservationsListCache", unless= "#result.size() == 0")
@@ -58,7 +49,7 @@ public class ReservationController implements Serializable {
             }).collect(Collectors.toList());
             return reservationDTOs;
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -83,7 +74,7 @@ public class ReservationController implements Serializable {
             dto.setPlaygroundId(reservation.getPlaygroundId());
             return dto;
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -103,7 +94,7 @@ public class ReservationController implements Serializable {
             reservation.setUserId(dto.getUserId());
             service.add(reservation);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -123,7 +114,7 @@ public class ReservationController implements Serializable {
             reservation.setPlaygroundId(dto.getPlaygroundId());
             service.update(reservation);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -135,7 +126,7 @@ public class ReservationController implements Serializable {
         try{
             service.delete(id);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }

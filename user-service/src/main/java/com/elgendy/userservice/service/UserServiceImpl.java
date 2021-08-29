@@ -2,20 +2,16 @@ package com.elgendy.userservice.service;
 
 import com.elgendy.userservice.model.User;
 import com.elgendy.userservice.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserRepository repository;
-
-    @Autowired
-    public UserServiceImpl(UserRepository repository) {
-        this.repository = repository;
-    }
+    private final UserRepository repository;
 
     @Override
     public List<User> getAll(){

@@ -2,20 +2,16 @@ package com.elgendy.playgroundservice.service;
 
 import com.elgendy.playgroundservice.model.Playground;
 import com.elgendy.playgroundservice.repository.PlaygroundRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class PlaygroundServiceImpl implements PlaygroundService {
 
-    private PlaygroundRepository repository;
-
-    @Autowired
-    public PlaygroundServiceImpl(PlaygroundRepository repository) {
-        this.repository = repository;
-    }
+    private final PlaygroundRepository repository;
 
     @Override
     public List<Playground> getAll() {

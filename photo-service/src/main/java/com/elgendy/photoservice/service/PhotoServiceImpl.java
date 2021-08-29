@@ -2,20 +2,16 @@ package com.elgendy.photoservice.service;
 
 import com.elgendy.photoservice.model.Photo;
 import com.elgendy.photoservice.repository.PhotoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class PhotoServiceImpl implements PhotoService {
 
-    private PhotoRepository repository;
-
-    @Autowired
-    public PhotoServiceImpl(PhotoRepository repository) {
-        this.repository = repository;
-    }
+    private final PhotoRepository repository;
 
     @Override
     public List<Photo> getAll() {

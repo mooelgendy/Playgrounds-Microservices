@@ -1,41 +1,32 @@
 package com.elgendy.invitationservice.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.elgendy.invitationservice.exception.InternalServerErrorException;
 import com.elgendy.invitationservice.model.Invitation;
 import com.elgendy.invitationservice.model.dto.InvitationDTO;
 import com.elgendy.invitationservice.service.InvitationService;
 import com.elgendy.invitationservice.service.ReservationInfo;
 import com.elgendy.invitationservice.service.UserInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+@Log4j2
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/invitation")
 public class InvitationController {
 
-	private InvitationService service;
-    private static Logger LOGGER = LoggerFactory.getLogger(InvitationController.class);
-
-    @Autowired
-    private UserInfo userInfo;
-
-    @Autowired
-    private ReservationInfo reservationInfo;
-
-    @Autowired
-    public InvitationController(InvitationService service) {
-        this.service = service;
-    }
+    private final InvitationService service;
+    private final UserInfo userInfo;
+    private final ReservationInfo reservationInfo;
 
     @GetMapping("/")
     @Cacheable(value= "invitationsListCache", unless= "#result.size() == 0")
@@ -45,19 +36,19 @@ public class InvitationController {
         try{
             invitations = service.getAll();
             invitationDTOs = invitations.stream().map(invitation -> {
-                        InvitationDTO dto = new InvitationDTO();
-                        dto.setId(invitation.getId());
-                        dto.setName(invitation.getName());
-                        dto.setDate(invitation.getDate());
-                        dto.setExpiryDate(invitation.getExpiryDate());
-                        dto.setReservationDTO(reservationInfo.getReservationDTO(invitation)); //call reservation-service
-                        dto.setUserDTO(userInfo.getUserDTO(invitation));                      //call user-service
-                        LOGGER.info(dto.toString());
-                        return dto;
+                InvitationDTO dto = new InvitationDTO();
+                dto.setId(invitation.getId());
+                dto.setName(invitation.getName());
+                dto.setDate(invitation.getDate());
+                dto.setExpiryDate(invitation.getExpiryDate());
+                dto.setReservationDTO(reservationInfo.getReservationDTO(invitation)); //call reservation-service
+                dto.setUserDTO(userInfo.getUserDTO(invitation));                      //call user-service
+                log.info(dto.toString());
+                return dto;
             }).collect(Collectors.toList());
             return invitationDTOs;
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -81,7 +72,7 @@ public class InvitationController {
             dto.setUserId(invitation.getUserId());
             return dto;
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -100,7 +91,7 @@ public class InvitationController {
             invitation.setUserId(dto.getUserId());
             service.add(invitation);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -120,7 +111,7 @@ public class InvitationController {
             invitation.setUserId(dto.getUserId());
             service.update(invitation);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
 
@@ -134,7 +125,7 @@ public class InvitationController {
         try{
             service.delete(id);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }

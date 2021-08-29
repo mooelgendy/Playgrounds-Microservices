@@ -1,26 +1,21 @@
 package com.elgendy.userservice.repository;
 
 import com.elgendy.userservice.model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
+@Log4j2
+@AllArgsConstructor
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
     @PersistenceContext
-    private EntityManager em;
-    private static Logger LOGGER = LoggerFactory.getLogger(UserRepositoryImpl.class);
-
-    @Autowired
-    public UserRepositoryImpl(EntityManager entityManager) {
-        this.em = entityManager;
-    }
+    private final EntityManager em;
 
     @Override
     public List<User> findAll() {
@@ -28,7 +23,7 @@ public class UserRepositoryImpl implements UserRepository {
         try{
             users = em.createQuery("From User", User.class).getResultList();
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return users;
     }
@@ -39,7 +34,7 @@ public class UserRepositoryImpl implements UserRepository {
         try{
             userById = em.find(User.class, id);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return userById;
     }
@@ -49,7 +44,7 @@ public class UserRepositoryImpl implements UserRepository {
         try{
             em.persist(user);
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -58,7 +53,7 @@ public class UserRepositoryImpl implements UserRepository {
         try{
             em.merge(user);
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -67,7 +62,7 @@ public class UserRepositoryImpl implements UserRepository {
         try{
             em.remove(user);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 }

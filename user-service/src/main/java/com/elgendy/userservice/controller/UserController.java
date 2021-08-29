@@ -1,12 +1,11 @@
 package com.elgendy.userservice.controller;
 
 import com.elgendy.userservice.exception.InternalServerErrorException;
-import com.elgendy.userservice.model.dto.UserDTO;
 import com.elgendy.userservice.model.User;
+import com.elgendy.userservice.model.dto.UserDTO;
 import com.elgendy.userservice.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,17 +17,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+@Log4j2
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/user")
 public class UserController implements Serializable {
 
-    private UserService service;
-    private static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-
-    @Autowired
-    public UserController(UserService service) {
-        this.service = service;
-    }
+    private final UserService service;
 
     @GetMapping("/")
     @Cacheable(value= "usersListCache", unless= "#result.size() == 0")
@@ -49,7 +44,7 @@ public class UserController implements Serializable {
             }).collect(Collectors.toList());
             return userDTOs;
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred");
         }
     }
@@ -73,7 +68,7 @@ public class UserController implements Serializable {
             dto.setPosition(user.getPosition());
             return dto;
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred");
         }
     }
@@ -92,7 +87,7 @@ public class UserController implements Serializable {
             user.setPosition(dto.getPosition());
             service.add(user);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred");
         }
     }
@@ -112,7 +107,7 @@ public class UserController implements Serializable {
             user.setPosition(dto.getPosition());
             service.update(user);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred");
         }
 
@@ -125,7 +120,7 @@ public class UserController implements Serializable {
         try{
             service.delete(id);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred");
         }
     }

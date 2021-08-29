@@ -1,26 +1,21 @@
 package com.elgendy.reservationservice.repository;
 
 import com.elgendy.reservationservice.model.Reservation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
+@Log4j2
+@AllArgsConstructor
 @Repository
 public class ReservationRepositoryImpl implements ReservationRepository {
 
     @PersistenceContext
-    private EntityManager em;
-    private static Logger LOGGER = LoggerFactory.getLogger(ReservationRepositoryImpl.class);
-
-    @Autowired
-    public ReservationRepositoryImpl(EntityManager em) {
-        this.em = em;
-    }
+    private final EntityManager em;
 
     @Override
     public List<Reservation> findAll() {
@@ -28,7 +23,7 @@ public class ReservationRepositoryImpl implements ReservationRepository {
         try{
             reservations = em.createQuery("From Reservation", Reservation.class).getResultList();
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return reservations;
     }
@@ -39,7 +34,7 @@ public class ReservationRepositoryImpl implements ReservationRepository {
         try{
             reservationById = em.find(Reservation.class, id);
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return reservationById;
     }
@@ -49,7 +44,7 @@ public class ReservationRepositoryImpl implements ReservationRepository {
         try{
             em.persist(reservation);
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -58,7 +53,7 @@ public class ReservationRepositoryImpl implements ReservationRepository {
         try{
             em.merge(reservation);
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -67,7 +62,7 @@ public class ReservationRepositoryImpl implements ReservationRepository {
         try{
             em.remove(reservation);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 }

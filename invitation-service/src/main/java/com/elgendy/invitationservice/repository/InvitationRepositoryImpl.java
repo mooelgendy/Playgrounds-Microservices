@@ -1,36 +1,29 @@
 package com.elgendy.invitationservice.repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import com.elgendy.invitationservice.model.Invitation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
+@Log4j2
+@AllArgsConstructor
 @Repository
-public class InvitationRepositoryImpl implements InvitationRepository{
+public class InvitationRepositoryImpl implements InvitationRepository {
 
-	
 	@PersistenceContext
-    private EntityManager em;
-    private static Logger LOGGER = LoggerFactory.getLogger(InvitationRepositoryImpl.class);
+    private final EntityManager em;
 
-    @Autowired
-    public InvitationRepositoryImpl(EntityManager em) {
-        this.em = em;
-    }
-    
 	@Override
 	public List<Invitation> findAll() {
 		List<Invitation> invitations = null;
         try{
         	invitations = em.createQuery("From Invitation", Invitation.class).getResultList();
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return invitations;	
 	}
@@ -41,7 +34,7 @@ public class InvitationRepositoryImpl implements InvitationRepository{
         try{
         	invitationById = em.find(Invitation.class, id);
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return invitationById;
 	}
@@ -51,21 +44,16 @@ public class InvitationRepositoryImpl implements InvitationRepository{
 		try{
             em.persist(invitation);
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
 	}
-
-//    @Override
-//    public Integer saveAndFlush(Invitation invitation) {
-//        return null;
-//    }
 
     @Override
 	public void update(Invitation invitation) {
 		try{
             em.merge(invitation);
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
 	}
 
@@ -74,7 +62,7 @@ public class InvitationRepositoryImpl implements InvitationRepository{
 		try{
 		    em.remove(invitation);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
 	}
 

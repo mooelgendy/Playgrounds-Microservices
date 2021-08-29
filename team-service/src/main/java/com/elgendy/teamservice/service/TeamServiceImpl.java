@@ -2,20 +2,16 @@ package com.elgendy.teamservice.service;
 
 import com.elgendy.teamservice.model.Team;
 import com.elgendy.teamservice.repository.TeamRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class TeamServiceImpl implements TeamService {
 
-    private TeamRepository repository;
-
-    @Autowired
-    public TeamServiceImpl(TeamRepository repository) {
-        this.repository = repository;
-    }
+    private final TeamRepository repository;
 
     @Override
     public List<Team> getAll() {

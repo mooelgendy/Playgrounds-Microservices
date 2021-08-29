@@ -1,14 +1,12 @@
 package com.elgendy.storeservice.controller;
 
 import com.elgendy.storeservice.exception.InternalServerErrorException;
-import com.elgendy.storeservice.model.dto.StoreDTO;
 import com.elgendy.storeservice.model.Store;
+import com.elgendy.storeservice.model.dto.StoreDTO;
 import com.elgendy.storeservice.service.StoreService;
 import com.elgendy.storeservice.service.UserInfo;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,20 +18,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+@Log4j2
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/store")
 public class StoreController {
 
-    private StoreService service;
-    private static Logger LOGGER = LoggerFactory.getLogger(StoreController.class);
-
-    @Autowired
-    UserInfo userInfo;
-
-    @Autowired
-    public StoreController(StoreService service) {
-        this.service = service;
-    }
+    private final StoreService service;
+    private final UserInfo userInfo;
 
     @GetMapping("/")
     @Cacheable(value= "itemsListCache", unless= "#result.size() == 0")
@@ -55,7 +47,7 @@ public class StoreController {
             }).collect(Collectors.toList());
             return itemsDTOs;
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -79,7 +71,7 @@ public class StoreController {
             dto.setUserId(item.getUserId());
             return dto;
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -98,7 +90,7 @@ public class StoreController {
             item.setUserId(dto.getUserId());
             service.add(item);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -118,7 +110,7 @@ public class StoreController {
             item.setUserId(dto.getUserId());
             service.update(item);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -130,7 +122,7 @@ public class StoreController {
         try{
             service.delete(id);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }

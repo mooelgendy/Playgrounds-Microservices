@@ -1,21 +1,17 @@
 package com.elgendy.invitationservice.service;
 
-import java.util.List;
-
 import com.elgendy.invitationservice.model.Invitation;
 import com.elgendy.invitationservice.repository.InvitationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@AllArgsConstructor
 @Service
 public class InvitationServiceImpl implements InvitationService {
 
-	private InvitationRepository repository;
-
-    @Autowired
-    public InvitationServiceImpl(InvitationRepository repository) {
-        this.repository = repository;
-    }
+	private final InvitationRepository repository;
     
 	@Override
 	public List<Invitation> getAll() {

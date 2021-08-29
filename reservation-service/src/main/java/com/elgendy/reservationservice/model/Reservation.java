@@ -1,12 +1,17 @@
 package com.elgendy.reservationservice.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
+@Data
 @Entity
 @Table(name = "RESERVATION")
 public class Reservation implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,85 +35,4 @@ public class Reservation implements Serializable {
 
     @JoinColumn(name = "USER_ID")
     private Integer userId;
-
-    public Reservation() {
-    }
-
-    public Reservation(String name, Date reservedTime, String playersNeeded, String hoursNumber, Integer playgroundId, Integer userId) {
-        this.name = name;
-        ReservedTime = reservedTime;
-        PlayersNeeded = playersNeeded;
-        HoursNumber = hoursNumber;
-        this.playgroundId = playgroundId;
-        this.userId = userId;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Date getReservedTime() {
-        return ReservedTime;
-    }
-
-    public void setReservedTime(Date reservedTime) {
-        ReservedTime = reservedTime;
-    }
-
-    public String getPlayersNeeded() {
-        return PlayersNeeded;
-    }
-
-    public void setPlayersNeeded(String playersNeeded) {
-        PlayersNeeded = playersNeeded;
-    }
-
-    public String getHoursNumber() {
-        return HoursNumber;
-    }
-
-    public void setHoursNumber(String hoursNumber) {
-        HoursNumber = hoursNumber;
-    }
-
-    public Integer getPlaygroundId() {
-        return playgroundId;
-    }
-
-    public void setPlaygroundId(Integer playgroundId) {
-        this.playgroundId = playgroundId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    @Override
-    public String toString() {
-        return "Reservation{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", ReservedTime=" + ReservedTime +
-                ", PlayersNeeded='" + PlayersNeeded + '\'' +
-                ", HoursNumber='" + HoursNumber + '\'' +
-                ", playgroundId=" + playgroundId +
-                ", userId=" + userId +
-                '}';
-    }
 }

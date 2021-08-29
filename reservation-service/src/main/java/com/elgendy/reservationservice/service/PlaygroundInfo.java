@@ -4,22 +4,20 @@ import com.elgendy.reservationservice.model.Reservation;
 import com.elgendy.reservationservice.model.dto.PlaygroundDTO;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Duration;
 import java.util.Date;
 
+@Log4j2
+@AllArgsConstructor
 @Service
 public class PlaygroundInfo {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(PlaygroundInfo.class);
-
-    @Autowired
-    private WebClient.Builder webClientBuilder;
+    private final WebClient.Builder webClientBuilder;
 
     @HystrixCommand(fallbackMethod = "getFallbackPlaygroundDTO", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "30000"),
@@ -36,9 +34,9 @@ public class PlaygroundInfo {
                     .bodyToMono(PlaygroundDTO.class)
                     .timeout(Duration.ofMillis(30000))
                     .block();
-            if(playgroundDTO != null) LOGGER.info("PlaygroundDTO: {}", playgroundDTO.toString());
+            if(playgroundDTO != null) log.info("PlaygroundDTO: {}", playgroundDTO.toString());
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             // In case of exceeding the time out or error, will be redirected to the below fallback method.
         }
         return playgroundDTO;

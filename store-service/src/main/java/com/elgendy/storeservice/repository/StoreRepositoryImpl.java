@@ -1,26 +1,21 @@
 package com.elgendy.storeservice.repository;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import com.elgendy.storeservice.model.Store;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
+@Log4j2
+@AllArgsConstructor
 @Repository
 public class StoreRepositoryImpl implements StoreRepository{
 
     @PersistenceContext
-    private EntityManager em;
-    private static Logger LOGGER = LoggerFactory.getLogger(StoreRepositoryImpl.class);
-
-    @Autowired
-    public StoreRepositoryImpl(EntityManager em) {
-        this.em = em;
-    }
+    private final EntityManager em;
 
     @Override
     public List<Store> findAll() {
@@ -28,7 +23,7 @@ public class StoreRepositoryImpl implements StoreRepository{
         try{
             items = em.createQuery("From Store", Store.class).getResultList();
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return items;
     }
@@ -39,7 +34,7 @@ public class StoreRepositoryImpl implements StoreRepository{
         try{
             itemById = em.find(Store.class, id);
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
         return itemById;
     }
@@ -49,7 +44,7 @@ public class StoreRepositoryImpl implements StoreRepository{
         try{
             em.persist(item);
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -58,7 +53,7 @@ public class StoreRepositoryImpl implements StoreRepository{
         try{
             em.merge(item);
         } catch(Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -67,7 +62,7 @@ public class StoreRepositoryImpl implements StoreRepository{
         try{
             em.remove(item);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 }

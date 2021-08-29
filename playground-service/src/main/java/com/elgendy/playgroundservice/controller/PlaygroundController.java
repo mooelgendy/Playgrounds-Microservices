@@ -1,12 +1,11 @@
 package com.elgendy.playgroundservice.controller;
 
 import com.elgendy.playgroundservice.exception.InternalServerErrorException;
-import com.elgendy.playgroundservice.model.dto.PlaygroundDTO;
 import com.elgendy.playgroundservice.model.Playground;
+import com.elgendy.playgroundservice.model.dto.PlaygroundDTO;
 import com.elgendy.playgroundservice.service.PlaygroundService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,17 +17,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
+@Log4j2
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/playground")
 public class PlaygroundController implements Serializable {
 
-    private PlaygroundService service;
-    private static Logger LOGGER = LoggerFactory.getLogger(PlaygroundController.class);
-
-    @Autowired
-    public PlaygroundController(PlaygroundService service) {
-        this.service = service;
-    }
+    private final PlaygroundService service;
 
     @GetMapping("/")
     @Cacheable(value= "playgroundsListCache", unless= "#result.size() == 0")
@@ -51,7 +46,7 @@ public class PlaygroundController implements Serializable {
             }).collect(Collectors.toList());
             return playgroundDTOs;
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -77,7 +72,7 @@ public class PlaygroundController implements Serializable {
             dto.setDescription(playground.getDescription());
             return dto;
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -98,7 +93,7 @@ public class PlaygroundController implements Serializable {
             playground.setPricePerHour(dto.getPricePerHour());
             service.add(playground);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
@@ -120,11 +115,10 @@ public class PlaygroundController implements Serializable {
             playground.setPhone(dto.getPhone());
             service.update(playground);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }
-
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -133,7 +127,7 @@ public class PlaygroundController implements Serializable {
         try{
             service.delete(id);
         } catch (Exception e){
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             throw new InternalServerErrorException("Error Occurred!");
         }
     }

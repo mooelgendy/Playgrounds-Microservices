@@ -11,9 +11,9 @@ import java.util.Date;
 @Table(name = "INVITATION")
 public class Invitation implements Serializable {
 
-	private static final long serialVersionUID = 1L;
 
-	@Id
+    private static final long serialVersionUID = 2003038143570179669L;
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     private Integer id;

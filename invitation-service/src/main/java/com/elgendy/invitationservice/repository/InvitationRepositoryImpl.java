@@ -19,51 +19,26 @@ public class InvitationRepositoryImpl implements InvitationRepository {
 
 	@Override
 	public List<Invitation> findAll() {
-		List<Invitation> invitations = null;
-        try{
-        	invitations = em.createQuery("From Invitation", Invitation.class).getResultList();
-        } catch(Exception e){
-            log.error(e.getMessage(), e);
-        }
-        return invitations;	
+		return em.createQuery("From Invitation", Invitation.class).getResultList();
 	}
 
 	@Override
 	public Invitation findById(Integer id) {
-		Invitation invitationById = null;
-        try{
-        	invitationById = em.find(Invitation.class, id);
-        } catch(Exception e){
-            log.error(e.getMessage(), e);
-        }
-        return invitationById;
+	    return em.find(Invitation.class, id);
 	}
 
 	@Override
 	public void save(Invitation invitation) {
-		try{
-            em.persist(invitation);
-        } catch(Exception e){
-            log.error(e.getMessage(), e);
-        }
+	    em.persist(invitation);
 	}
 
     @Override
 	public void update(Invitation invitation) {
-		try{
-            em.merge(invitation);
-        } catch(Exception e){
-            log.error(e.getMessage(), e);
-        }
+	    em.merge(invitation);
 	}
 
 	@Override
 	public void delete(Invitation invitation) {
-		try{
-		    em.remove(invitation);
-        } catch (Exception e){
-            log.error(e.getMessage(), e);
-        }
+	    em.remove(invitation);
 	}
-
 }

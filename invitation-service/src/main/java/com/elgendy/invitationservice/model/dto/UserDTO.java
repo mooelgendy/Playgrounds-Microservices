@@ -9,7 +9,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class UserDTO implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4337178307266783091L;
     private Integer id;
     private String name;
     private String address;

@@ -1,5 +1,6 @@
-package com.elgendy.invitationservice.service;
+package com.elgendy.invitationservice.client;
 
+import com.elgendy.invitationservice.exception.ApplicationException;
 import com.elgendy.invitationservice.model.Invitation;
 import com.elgendy.invitationservice.model.dto.UserDTO;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
@@ -7,6 +8,7 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Duration;
@@ -14,9 +16,10 @@ import java.time.Duration;
 @Log4j2
 @AllArgsConstructor
 @Service
-public class UserInfo {
+public class GetUserInfoClient {
 
     private final WebClient.Builder webClientBuilder;
+    private static final String SERVICE_BASE_URL = "http://user-service/playgrounds/api/user/";
 
     @HystrixCommand(fallbackMethod = "getFallbackUserDTO", commandProperties = {
             @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "30000"),
@@ -28,15 +31,17 @@ public class UserInfo {
         try{
             userDTO = webClientBuilder.build()
                     .get()
-                    .uri("http://user-service/playgrounds/api/user/" + invitation.getUserId())
+                    .uri(SERVICE_BASE_URL + invitation.getUserId())
                     .retrieve()
                     .bodyToMono(UserDTO.class)
                     .timeout(Duration.ofMillis(30000))
                     .block();
             if (userDTO != null) log.info("User: {}", userDTO.toString());
+        } catch (HttpStatusCodeException e){
+            log.error(e.getMessage());
+            throw new ApplicationException(e.getMessage(), e.getStatusCode(), e);
         } catch (Exception e){
-            log.error(e.getMessage(), e);
-            // In case of exceeding the time out or error, will be redirected to the below fallback method.
+            log.error(e.getMessage());
         }
         return userDTO;
     }

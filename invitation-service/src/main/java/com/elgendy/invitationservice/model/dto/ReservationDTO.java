@@ -10,7 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class ReservationDTO implements Serializable{
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -3002613465578685720L;
     private Integer id;
     private String name;
     private Date ReservedTime;

@@ -1,18 +1,18 @@
 package com.elgendy.invitationservice.service;
 
-import com.elgendy.invitationservice.model.Invitation;
+import com.elgendy.invitationservice.model.dto.InvitationDTO;
 
 import java.util.List;
 
 public interface InvitationService {
 
-	List<Invitation> getAll();
+	List<InvitationDTO> getInvitations();
 
-	Invitation getOne(Integer id);
+	InvitationDTO getInvitation(Integer id);
 
-    void add(Invitation invitation);
+    void addInvitation(InvitationDTO invitationDTO);
 
-    void update(Invitation invitation);
+    void updateInvitation(InvitationDTO invitationDTO);
 
-    void delete(Integer id);
+    void deleteInvitation(Integer id);
 }

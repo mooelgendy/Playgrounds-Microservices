@@ -7,9 +7,6 @@ import com.elgendy.storeservice.service.StoreService;
 import com.elgendy.storeservice.service.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,11 +25,10 @@ public class StoreController {
     private final UserInfo userInfo;
 
     @GetMapping("/")
-    @Cacheable(value= "itemsListCache", unless= "#result.size() == 0")
     public List<StoreDTO> getAll(){
-        List<Store> items = null;
-        List<StoreDTO> itemsDTOs = null;
-        Iterator<Store> it = null;
+        List<Store> items;
+        List<StoreDTO> itemsDTOs;
+        Iterator<Store> it;
         try{
             items = service.getAll();
             itemsDTOs = items.stream().map(item -> {
@@ -53,10 +49,9 @@ public class StoreController {
     }
 
     @GetMapping("/{id}")
-    @Cacheable(value = "itemCache")
     public StoreDTO findOne(@PathVariable("id") Integer id){
-        Store item = null;
-        StoreDTO dto = null;
+        Store item;
+        StoreDTO dto;
         try{
             item = service.getOne(id);
             if(item == null){
@@ -78,9 +73,8 @@ public class StoreController {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    @CachePut(value= "itemCache")
     public void create(@RequestBody StoreDTO dto) {
-        Store item = null;
+        Store item;
         try{
             item = new Store();
             item.setName(dto.getName());
@@ -97,9 +91,8 @@ public class StoreController {
 
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
-    @CachePut(value= "itemCache")
     public void update(@RequestBody StoreDTO dto) {
-        Store item = null;
+        Store item;
         try{
             item = new Store();
             item.setId(dto.getId());
@@ -117,7 +110,6 @@ public class StoreController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @CacheEvict(value= "itemCache")
     public void delete(@PathVariable("id") Integer id) {
         try{
             service.delete(id);

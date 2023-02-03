@@ -8,9 +8,6 @@ import com.elgendy.reservationservice.service.ReservationService;
 import com.elgendy.reservationservice.service.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,10 +27,9 @@ public class ReservationController implements Serializable {
     private final PlaygroundInfo playgroundInfo;
 
     @GetMapping("/")
-    @Cacheable(value= "reservationsListCache", unless= "#result.size() == 0")
     public List<ReservationDTO> getAll(){
-        List<Reservation> reservations = null;
-        List<ReservationDTO> reservationDTOs = null;
+        List<Reservation> reservations;
+        List<ReservationDTO> reservationDTOs;
         try{
             reservations = service.getAll();
             reservationDTOs = reservations.stream().map(reservation -> {
@@ -55,10 +51,9 @@ public class ReservationController implements Serializable {
     }
 
     @GetMapping("/{id}")
-    @Cacheable(value = "reservationCache")
     public ReservationDTO findOne(@PathVariable("id") Integer id){
-        Reservation reservation = null;
-        ReservationDTO dto = null;
+        Reservation reservation;
+        ReservationDTO dto;
         try{
             reservation = service.getOne(id);
             if(reservation == null){
@@ -81,9 +76,8 @@ public class ReservationController implements Serializable {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    @CachePut(value= "reservationCache")
     public void create(@RequestBody ReservationDTO dto) {
-        Reservation reservation = null;
+        Reservation reservation;
         try{
             reservation = new Reservation();
             reservation.setName(dto.getName());
@@ -101,9 +95,8 @@ public class ReservationController implements Serializable {
 
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
-    @CachePut(value= "reservationCache")
     public void update(@RequestBody ReservationDTO dto) {
-        Reservation reservation = null;
+        Reservation reservation;
         try{
             reservation = new Reservation();
             reservation.setName(dto.getName());
@@ -121,7 +114,6 @@ public class ReservationController implements Serializable {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @CacheEvict(value= "reservationCache")
     public void delete(@PathVariable("id") Integer id) {
         try{
             service.delete(id);

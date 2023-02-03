@@ -6,9 +6,6 @@ import com.elgendy.photoservice.model.dto.PhotoDTO;
 import com.elgendy.photoservice.service.PhotoService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +23,9 @@ public class PhotoController implements Serializable {
     private final PhotoService service;
 
     @GetMapping("/")
-    @Cacheable(value= "photosListCache", unless= "#result.size() == 0")
     public List<PhotoDTO> getAll(){
-        List<Photo> photos = null;
-        List<PhotoDTO> photoDTOs = null;
+        List<Photo> photos;
+        List<PhotoDTO> photoDTOs;
         try{
             photos = service.getAll();
             photoDTOs = photos.stream().map(photo -> {
@@ -51,10 +47,9 @@ public class PhotoController implements Serializable {
     }
 
     @GetMapping("/{id}")
-    @Cacheable(value = "photoCache")
     public PhotoDTO findOne(@PathVariable("id") Integer id){
-        Photo photo = null;
-        PhotoDTO dto = null;
+        Photo photo;
+        PhotoDTO dto;
         try{
             photo = service.getOne(id);
             if(photo == null){
@@ -77,9 +72,8 @@ public class PhotoController implements Serializable {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    @CachePut(value= "photoCache")
     public void create(@RequestBody PhotoDTO dto) {
-        Photo photo = null;
+        Photo photo;
         try{
             photo = new Photo();
             photo.setName(dto.getName());
@@ -97,9 +91,8 @@ public class PhotoController implements Serializable {
 
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
-    @CachePut(value= "photoCache")
     public void update(@RequestBody PhotoDTO dto) {
-        Photo photo = null;
+        Photo photo;
         try{
             photo = new Photo();
             photo.setId(dto.getId());
@@ -119,7 +112,6 @@ public class PhotoController implements Serializable {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @CacheEvict(value= "photoCache")
     public void delete(@PathVariable("id") Integer id) {
         try{
             service.delete(id);

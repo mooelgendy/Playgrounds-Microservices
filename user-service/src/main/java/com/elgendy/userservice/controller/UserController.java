@@ -6,9 +6,6 @@ import com.elgendy.userservice.model.dto.UserDTO;
 import com.elgendy.userservice.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +23,9 @@ public class UserController implements Serializable {
     private final UserService service;
 
     @GetMapping("/")
-    @Cacheable(value= "usersListCache", unless= "#result.size() == 0")
     public List<UserDTO> getAll(){
-        List<User> users = null;
-        List<UserDTO> userDTOs = null;
+        List<User> users;
+        List<UserDTO> userDTOs;
         try {
             users = service.getAll();
             userDTOs = users.stream().map(user -> {
@@ -50,10 +46,9 @@ public class UserController implements Serializable {
     }
 
     @GetMapping("/{id}")
-    @Cacheable(value = "userCache")
     public UserDTO findOne(@PathVariable("id") Integer id){
-        User user = null;
-        UserDTO dto = null;
+        User user;
+        UserDTO dto;
         try{
             user = service.getOne(id);
             if(user == null){
@@ -75,9 +70,8 @@ public class UserController implements Serializable {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    @CachePut(value= "userCache")
     public void create(@RequestBody UserDTO dto) {
-        User user = null;
+        User user;
         try{
             user = new User();
             user.setName(dto.getName());
@@ -94,9 +88,8 @@ public class UserController implements Serializable {
 
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
-    @CachePut(value= "userCache")
     public void update(@RequestBody UserDTO dto) {
-        User user = null;
+        User user;
         try{
             user = new User();
             user.setId(dto.getId());
@@ -115,7 +108,6 @@ public class UserController implements Serializable {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @CacheEvict(value= "userCache")
     public void delete(@PathVariable("id") Integer id) {
         try{
             service.delete(id);

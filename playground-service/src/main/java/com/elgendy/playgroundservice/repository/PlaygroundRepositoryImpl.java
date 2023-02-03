@@ -3,6 +3,9 @@ package com.elgendy.playgroundservice.repository;
 import com.elgendy.playgroundservice.model.Playground;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -18,6 +21,7 @@ public class PlaygroundRepositoryImpl implements PlaygroundRepository {
     private final EntityManager em;
 
     @Override
+    @Cacheable(value= "playgroundsListCache", unless= "#result.size() == 0")
     public List<Playground> findAll() {
         List<Playground> playgrounds = null;
         try{
@@ -29,6 +33,7 @@ public class PlaygroundRepositoryImpl implements PlaygroundRepository {
     }
 
     @Override
+    @Cacheable(value = "playgroundCache", unless="#result == null")
     public Playground findById(Integer id) {
         Playground playgroundById = null;
         try{
@@ -40,6 +45,7 @@ public class PlaygroundRepositoryImpl implements PlaygroundRepository {
     }
 
     @Override
+    @CachePut(value= "playgroundCache")
     public void save(Playground playground) {
         try{
             em.persist(playground);
@@ -49,6 +55,7 @@ public class PlaygroundRepositoryImpl implements PlaygroundRepository {
     }
 
     @Override
+    @CachePut(value= "playgroundCache")
     public void update(Playground playground) {
         try{
             em.merge(playground);
@@ -58,6 +65,7 @@ public class PlaygroundRepositoryImpl implements PlaygroundRepository {
     }
 
     @Override
+    @CacheEvict(value= "playgroundCache")
     public void delete(Playground playground) {
         try{
             em.remove(playground);

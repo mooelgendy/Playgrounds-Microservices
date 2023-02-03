@@ -6,9 +6,6 @@ import com.elgendy.teamservice.model.dto.TeamDTO;
 import com.elgendy.teamservice.service.TeamService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +23,9 @@ public class TeamController implements Serializable {
     private final TeamService service;
 
     @GetMapping("/")
-    @Cacheable(value= "teamsListCache", unless= "#result.size() == 0")
     public List<TeamDTO> getAll(){
-        List<Team> teams = null;
-        List<TeamDTO> teamDTOs = null;
+        List<Team> teams;
+        List<TeamDTO> teamDTOs;
         try{
             teams = service.getAll();
             teamDTOs = teams.stream().map(team -> {
@@ -48,10 +44,9 @@ public class TeamController implements Serializable {
     }
 
     @GetMapping("/{id}")
-    @Cacheable(value = "teamCache")
     public TeamDTO findOne(@PathVariable("id") Integer id){
-        Team team = null;
-        TeamDTO dto = null;
+        Team team;
+        TeamDTO dto;
         try{
             team = service.getOne(id);
             if(team == null){
@@ -71,9 +66,8 @@ public class TeamController implements Serializable {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    @CachePut(value= "teamCache")
     public void create(@RequestBody TeamDTO dto) {
-        Team team = null;
+        Team team;
         try{
             team = new Team();
             team.setName(dto.getName());
@@ -88,9 +82,8 @@ public class TeamController implements Serializable {
 
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
-    @CachePut(value= "teamCache")
     public void update(@RequestBody TeamDTO dto) {
-        Team team = null;
+        Team team;
         try{
             team = new Team();
             team.setId(dto.getId());
@@ -106,7 +99,6 @@ public class TeamController implements Serializable {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @CacheEvict(value= "teamCache")
     public void delete(@PathVariable("id") Integer id) {
         try{
             service.delete(id);

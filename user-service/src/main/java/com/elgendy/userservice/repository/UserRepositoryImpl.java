@@ -3,6 +3,9 @@ package com.elgendy.userservice.repository;
 import com.elgendy.userservice.model.User;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -18,6 +21,7 @@ public class UserRepositoryImpl implements UserRepository {
     private final EntityManager em;
 
     @Override
+    @Cacheable(value= "usersListCache", unless= "#result.size() == 0")
     public List<User> findAll() {
         List<User> users = null;
         try{
@@ -29,6 +33,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    @Cacheable(value = "userCache", unless="#result == null")
     public User findById(Integer id) {
         User userById = null;
         try{
@@ -40,6 +45,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    @CachePut(value= "userCache")
     public void save(User user) {
         try{
             em.persist(user);
@@ -49,6 +55,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    @CachePut(value= "userCache")
     public void update(User user) {
         try{
             em.merge(user);
@@ -58,6 +65,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    @CacheEvict(value= "userCache")
     public void delete(User user) {
         try{
             em.remove(user);

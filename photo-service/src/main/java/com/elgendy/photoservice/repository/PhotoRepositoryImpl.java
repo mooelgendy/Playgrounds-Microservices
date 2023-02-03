@@ -3,6 +3,9 @@ package com.elgendy.photoservice.repository;
 import com.elgendy.photoservice.model.Photo;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -18,6 +21,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     private final EntityManager em;
 
     @Override
+    @Cacheable(value= "photosListCache", unless= "#result.size() == 0")
     public List<Photo> findAll() {
         List<Photo> photos = null;
         try{
@@ -29,6 +33,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     }
 
     @Override
+    @Cacheable(value = "photoCache", unless="#result == null")
     public Photo findById(Integer id) {
         Photo photoById = null;
         try{
@@ -40,6 +45,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     }
 
     @Override
+    @CachePut(value= "photoCache")
     public void save(Photo photo) {
         try{
             em.persist(photo);
@@ -49,6 +55,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     }
 
     @Override
+    @CachePut(value= "photoCache")
     public void update(Photo photo) {
         try{
             em.merge(photo);
@@ -58,6 +65,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     }
 
     @Override
+    @CacheEvict(value= "photoCache")
     public void delete(Photo photo) {
         try{
             em.remove(photo);

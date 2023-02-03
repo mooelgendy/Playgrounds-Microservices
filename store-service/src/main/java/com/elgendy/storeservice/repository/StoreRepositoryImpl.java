@@ -3,6 +3,9 @@ package com.elgendy.storeservice.repository;
 import com.elgendy.storeservice.model.Store;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -18,6 +21,7 @@ public class StoreRepositoryImpl implements StoreRepository{
     private final EntityManager em;
 
     @Override
+    @Cacheable(value= "itemsListCache", unless= "#result.size() == 0")
     public List<Store> findAll() {
         List<Store> items = null;
         try{
@@ -29,6 +33,7 @@ public class StoreRepositoryImpl implements StoreRepository{
     }
 
     @Override
+    @Cacheable(value = "itemCache", unless="#result == null")
     public Store findById(Integer id) {
         Store itemById = null;
         try{
@@ -40,6 +45,7 @@ public class StoreRepositoryImpl implements StoreRepository{
     }
 
     @Override
+    @CachePut(value= "itemCache")
     public void save(Store item) {
         try{
             em.persist(item);
@@ -49,6 +55,7 @@ public class StoreRepositoryImpl implements StoreRepository{
     }
 
     @Override
+    @CachePut(value= "itemCache")
     public void update(Store item) {
         try{
             em.merge(item);
@@ -58,6 +65,7 @@ public class StoreRepositoryImpl implements StoreRepository{
     }
 
     @Override
+    @CacheEvict(value= "itemCache")
     public void delete(Store item) {
         try{
             em.remove(item);

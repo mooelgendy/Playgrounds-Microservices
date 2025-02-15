@@ -13,9 +13,10 @@ Technology stack used in this web application:
 - Spring Cloud
 - Spring WebFlux
 - Service registration and discovery pattern using Eureka server
-- Circuit Breaker pattern using Netflix Hystrix
+- Circuit Breaker pattern using Resilience4j
 - Caching using Redis in-memory DB
 - Spring Data
 - Hibernate/JPA
 - Mysql Database
 - Maven
+- Docker

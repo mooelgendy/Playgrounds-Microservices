@@ -8,11 +8,11 @@ public interface InvitationService {
 
 	List<InvitationDTO> getInvitations();
 
-	InvitationDTO getInvitation(Integer id);
+	InvitationDTO getInvitation(Long id);
 
-    void addInvitation(InvitationDTO invitationDTO);
+	InvitationDTO addInvitation(InvitationDTO invitationDTO);
 
-    void updateInvitation(InvitationDTO invitationDTO);
+	InvitationDTO updateInvitation(InvitationDTO invitationDTO);
 
-    void deleteInvitation(Integer id);
+	void deleteInvitation(Long id);
 }

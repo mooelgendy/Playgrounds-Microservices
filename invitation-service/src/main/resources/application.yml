@@ -1,0 +1,72 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /playgrounds
+
+spring:
+  application:
+    name: invitation-service
+  
+  # DB Configuration
+  datasource:
+    url: jdbc:mysql://localhost:3306/invitation_service?useSSL=false
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  # JPA/Hibernate
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  
+  # Security
+  security:
+    user:
+      name: root
+      password: root
+    basic:
+      enabled: false
+    enabled: false
+  
+  # Redis Caching
+  cache:
+    type: redis
+    redis:
+      cache-null-values: false
+      time-to-live: 600000
+      key-prefix: false
+  redis:
+    host: localhost
+    port: 6379
+    password: password
+  
+  # Circuit Breaker
+  cloud:
+    circuitbreaker:
+      resilience4j:
+        enabled: true
+        name: default
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 100
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        permittedNumberOfCallsInHalfOpenState: 10
+        maxWaitDurationInHalfOpenState: 5000
+
+# Management Security
+management:
+  security:
+    enabled: false
+
+# Logging
+logging:
+  level:
+    com: info
+
+# Swagger UI
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs

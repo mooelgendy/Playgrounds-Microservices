@@ -1,15 +1,25 @@
 package com.elgendy.invitationservice.model.dto;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Builder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class InvitationDTO implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = -8078928298584452751L;
-	private Integer id;
+	private Long id;
     private String name;
     private Date date;
     private Date expiryDate;

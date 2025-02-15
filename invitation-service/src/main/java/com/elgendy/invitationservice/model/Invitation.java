@@ -1,8 +1,7 @@
 package com.elgendy.invitationservice.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -11,12 +10,10 @@ import java.util.Date;
 @Table(name = "INVITATION")
 public class Invitation implements Serializable {
 
-
-    private static final long serialVersionUID = 2003038143570179669L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    private Integer id;
+    private Long id;
 
     @Column(name = "NAME")
     private String name;

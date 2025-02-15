@@ -1,19 +1,23 @@
 package com.elgendy.invitationservice.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ReservationDTO implements Serializable{
 
+    @Serial
     private static final long serialVersionUID = -3002613465578685720L;
-    private Integer id;
+    private Long id;
     private String name;
-    private Date ReservedTime;
-    private String PlayersNeeded;
-    private String HoursNumber;
+    private Date reservedTime;
+    private String playersNeeded;
+    private String hoursNumber;
 }

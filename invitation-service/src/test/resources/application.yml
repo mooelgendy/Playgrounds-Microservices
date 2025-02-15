@@ -1,0 +1,35 @@
+spring:
+
+  # JPA configuration
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+
+  # Disable various features for testing
+  cloud:
+    discovery:
+      enabled: false
+
+  security:
+    enabled: false
+
+  redis:
+    host: localhost
+    port: 6379
+
+# Logging configuration
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.jdbc.datasource: DEBUG
+
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false

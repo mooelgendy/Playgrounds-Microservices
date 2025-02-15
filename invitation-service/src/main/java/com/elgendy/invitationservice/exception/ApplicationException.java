@@ -1,20 +1,17 @@
 package com.elgendy.invitationservice.exception;
 
 import lombok.Data;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatusCode;
 
 import java.util.Date;
 
 @Data
+@RequiredArgsConstructor
 public class ApplicationException extends RuntimeException {
 
-    private String message;
-    private HttpStatus httpStatus;
-    private Throwable throwable;
-    private Date date;
-
-    public ApplicationException(String message, HttpStatus httpStatus, Throwable cause) {
-        super(message, cause);
-        this.httpStatus = httpStatus;
-    }
+    private final String message;
+    private final HttpStatusCode httpStatus;
+    private final Throwable throwable;
+    private final Date date;
 }

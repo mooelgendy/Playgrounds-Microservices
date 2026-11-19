@@ -20,3 +20,28 @@ Technology stack used in this web application:
 - Mysql Database
 - Maven
 - Docker
+
+## Services
+
+| Service | Responsibility |
+| --- | --- |
+| `discovery-server` | Eureka service registry |
+| `playground-service` | Playground catalogue and search ([API docs](playground-service/README.md)) |
+| `reservation-service` | Playground reservations |
+| `user-service` | User accounts |
+| `team-service` | Teams and memberships |
+| `invitation-service` | Team invitations |
+| `store-service` | Sports store catalogue |
+| `photo-service` | Photo storage |
+
+## Building a service
+
+Each service is an independent Maven project. To build and test one of them:
+
+```bash
+cd playground-service
+mvn test
+```
+
+The tests for `playground-service` run on an in-memory H2 database, so MySQL
+and Redis do not need to be running.
